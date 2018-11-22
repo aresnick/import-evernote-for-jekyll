@@ -10,7 +10,7 @@ var config = {
 		"path": "../notes" // Where we've exported our Evernote notes to
 	},
 	"output": {
-		"posts_path": "../_notes/evernote-export", // Where we want to store processed posts
+		"posts_path": "../_evernotes", // Where we want to store processed posts
 		"media_path": "../media/evernote-export" // Where we want to store media associated with processed posts
 	}
 };
