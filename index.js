@@ -72,7 +72,8 @@ originals.html_files.forEach(function(filepath) { // Copy over transformed HTML 
 console.log("\nMoving media resources…");
 originals.resourceFolders.forEach(function(rf) { // Copy all media files into a common directory
 	console.log("Exporting media from", rf, "to", config.output.media_path);
-	files = fs.readdirSync(rf).filter(p => fs.lstatSync(rf).isFile());
+	var rawPaths = fs.readdirSync(rf).map(p => path.join(rf, p));
+	var files = rawPaths.filter(p => fs.lstatSync(p).isFile());
 	files.forEach(function(file) {
 		var newPathname = path.join(config.output.media_path, path.basename(file));
 
