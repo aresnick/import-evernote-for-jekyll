@@ -1,0 +1,16 @@
+{
+  "name": "import-evernote-for-jekyll",
+  "version": "0.0.1",
+  "description": "A quick script to process Evernote notebook exports for use with Jekyll",
+  "main": "index.js",
+  "dependencies": {
+    "inliner": "^1.13.1",
+    "node-html-parser": "^1.1.11"
+  },
+  "devDependencies": {},
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "",
+  "license": "MIT"
+}
