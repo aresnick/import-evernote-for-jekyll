@@ -2,6 +2,7 @@ var fs = require('fs'); // For reading and modifying the file system
 var path = require('path'); // For manipulating file paths
 var HTMLParser = require('node-html-parser'); // For parsing exported HTML
 var assert = require('assert'); // For basic testing
+var pretty = require('pretty'); // For prettifying HTML
 
 // A config object for holding our configuration information—
 var config = {
@@ -51,10 +52,12 @@ var getCleanBodyFrom = function(filename) {
 	var body = HTMLParser.parse(data).querySelector('body').innerHTML; // Extract the body
 	originals.resourceFolders.forEach(function(rf) { // Replace all .resources directory paths with our media path
 		var encodedRF = encodeURIComponent(path.basename(rf));
-		body = body.replace(new RegExp(encodedRF, "g"), config.output.media_path);
+		body = body.replace(new RegExp(encodedRF, "g"), "{{ site.evernote_media_export_path }}");
 	});
 
-	return body;
+	var data = `---\n---\n${ pretty(body) }`;
+
+	return data;
 };
 
 console.log("\nExtracting HTML files…");
