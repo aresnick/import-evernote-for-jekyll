@@ -5,7 +5,8 @@
   "main": "index.js",
   "dependencies": {
     "inliner": "^1.13.1",
-    "node-html-parser": "^1.1.11"
+    "node-html-parser": "^1.1.11",
+    "pretty": "^2.0.0"
   },
   "devDependencies": {},
   "scripts": {
