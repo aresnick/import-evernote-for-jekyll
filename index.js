@@ -31,8 +31,8 @@ pathnames = fs.readdirSync(config.import.path).map(p => path.join(config.import.
 // Create an object for storing information about the original paths of our files
 var originals = {};
 
-// Filter paths for those ending in .html
-originals.html_files = pathnames.filter(p => p.match(/\.html$/));
+// Filter paths for those ending in .html, removing Evernote's index.html
+originals.html_files = pathnames.filter(p => p.match(/\.html$/) && !p.match(/index\.html$/));
 console.log("Found html_files:\n", originals.html_files);
 	
 // Filter paths for those which are directories whose name ends in .resources
