@@ -31,8 +31,8 @@ pathnames = fs.readdirSync(config.import.path).map(p => path.join(config.import.
 // Create an object for storing information about the original paths of our files
 var originals = {};
 
-// Filter paths for those ending in .html, removing Evernote's index.html
-originals.html_files = pathnames.filter(p => p.match(/\.html$/) && !p.match(/index\.html$/));
+// Filter paths for those ending in .html
+originals.html_files = pathnames.filter(p => p.match(/\.html$/));
 console.log("Found html_files:\n", originals.html_files);
 	
 // Filter paths for those which are directories whose name ends in .resources
@@ -61,7 +61,8 @@ var getCleanBodyFrom = function(filename) {
 };
 
 console.log("\nExtracting HTML files…");
-originals.html_files.forEach(function(filepath) { // Copy over transformed HTML files
+// Filter out index.html so that we don't export that
+originals.html_files.filter(f => !f.match(/index\.html$/)).forEach(function(filepath) { // Copy over transformed HTML files
 	console.log("Extracting the <body> from", filepath);
 	var body = getCleanBodyFrom(filepath);
 	var filename = path.basename(filepath).replace(/ /g, '-');
