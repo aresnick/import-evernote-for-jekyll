@@ -3,6 +3,7 @@ var path = require('path'); // For manipulating file paths
 var HTMLParser = require('node-html-parser'); // For parsing exported HTML
 var assert = require('assert'); // For basic testing
 var pretty = require('pretty'); // For prettifying HTML
+var yaml = require('js-yaml'); // For creating YAML front-matter
 
 // A config object for holding our configuration information—
 var config = {
