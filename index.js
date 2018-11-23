@@ -46,6 +46,17 @@ originals.resourceFiles = originals.resourceFolders.map(function(rf) {
 	return paths;
 }).reduce((a, b) => a.concat(b));
 
+var querySelectorAllByAttribute = function(parsed, tag, key, value) {
+	var tags = parsed.querySelectorAll(tag);
+	var withKeys = tags.filter(t => key in t.attributes);
+	var withValue = withKeys.filter(k => k.attributes[key] == value);
+	return withValue;
+};
+
+var querySelectorByAttribute = function(parsed, tag, key, value) {
+	return querySelectorAllByAttribute(parsed, tag, key, value)[0];
+};
+
 // A function for extracting the body from an HTML file while rewriting media paths
 var getCleanBodyFrom = function(filename) {
 	var data = fs.readFileSync(filename, { "encoding": "utf-8" }); // Read the data
