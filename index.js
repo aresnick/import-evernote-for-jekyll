@@ -60,13 +60,40 @@ var querySelectorByAttribute = function(parsed, tag, key, value) {
 // A function for extracting the body from an HTML file while rewriting media paths
 var getCleanBodyFrom = function(filename) {
 	var data = fs.readFileSync(filename, { "encoding": "utf-8" }); // Read the data
-	var body = HTMLParser.parse(data).querySelector('body').innerHTML; // Extract the body
+	var parsed = HTMLParser.parse(data);
+	var body = parsed.querySelector('body').innerHTML; // Extract the body
+
+	var frontMatter = {};
+	frontMatter.title = parsed.querySelector("title").innerHTML;
+	var metaAttrsToRetrieve = {
+		"dateCreated": 'created',
+		"dateUpdated": 'updated',
+		"author": 'author',
+		"tags": 'keywords'
+	};
+
+	var metaAttrFunctions = {
+		"tags": t => t.split(',').map(k => k.trim())
+	};
+
+	Object.keys(metaAttrsToRetrieve).forEach(function(attr) {
+		var element = querySelectorByAttribute(parsed, 'meta', 'name', metaAttrsToRetrieve[attr]);
+		if (element) {
+			var attributes = element.attributes;
+			var content = attr in metaAttrFunctions ? metaAttrFunctions[attr](attributes.content) : attributes.content;
+			frontMatter[attr] = content;
+		}
+		else {
+			console.log("Looking for a <meta> tag with", `name=${metaAttrsToRetrieve[attr]}`, "but failed to find one…");
+		}
+	});
+
 	originals.resourceFolders.forEach(function(rf) { // Replace all .resources directory paths with our media path
 		var encodedRF = encodeURIComponent(path.basename(rf));
 		body = body.replace(new RegExp(encodedRF, "g"), "{{ site.evernote_media_export_path }}");
 	});
 
-	var data = `---\n---\n${ pretty(body) }`;
+	var data = `---\n${ yaml.safeDump(frontMatter) }---\n${ pretty(body) }`;
 
 	return data;
 };
