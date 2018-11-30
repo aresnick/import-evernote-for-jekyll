@@ -1,6 +1,6 @@
 var fs = require('fs'); // For reading and modifying the file system
 var path = require('path'); // For manipulating file paths
-var HTMLParser = require('node-html-parser'); // For parsing exported HTML
+var cheerio = require('cheerio'); // For parsing exported HTML
 var assert = require('assert'); // For basic testing
 var pretty = require('pretty'); // For prettifying HTML
 var yaml = require('js-yaml'); // For creating YAML front-matter
@@ -61,11 +61,18 @@ var querySelectorByAttribute = function(parsed, tag, key, value) {
 // A function for extracting the body from an HTML file while rewriting media paths
 var getCleanBodyFrom = function(filename) {
 	var data = fs.readFileSync(filename, { "encoding": "utf-8" }); // Read the data
-	var parsed = HTMLParser.parse(data);
-	var body = parsed.querySelector('body').innerHTML; // Extract the body
+	var $ = cheerio.load(data);
+
+	$('body [style]').each(function(index, element) {
+		$(element).removeAttr('style')
+	});
+
+	
+	var body = $('body').html(); // Extract the body
+	// console.log("Looking at", body);
 
 	var frontMatter = {};
-	frontMatter.title = parsed.querySelector("title").innerHTML;
+	frontMatter.title = $('title').html();
 	var metaAttrsToRetrieve = {
 		"dateCreated": 'created',
 		"dateUpdated": 'updated',
@@ -78,10 +85,10 @@ var getCleanBodyFrom = function(filename) {
 	};
 
 	Object.keys(metaAttrsToRetrieve).forEach(function(attr) {
-		var element = querySelectorByAttribute(parsed, 'meta', 'name', metaAttrsToRetrieve[attr]);
-		if (element) {
-			var attributes = element.attributes;
-			var content = attr in metaAttrFunctions ? metaAttrFunctions[attr](attributes.content) : attributes.content;
+		var elements = $(`meta[name="${attr}"]`);
+		if (elements.length > 0) {
+			var element = elements[0];
+			var content = $(element).attr('content');
 			frontMatter[attr] = content;
 		}
 		else {
